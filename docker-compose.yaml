@@ -1,0 +1,10 @@
+version: '3.5'
+services:
+    b2_eval:
+        hostname: b2_eval
+        build: ./docker
+        ports:
+            - "8080:80"
+        volumes:
+            - ./app:/var/www/html/
+
