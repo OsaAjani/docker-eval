@@ -3,6 +3,8 @@ services:
     b2_eval:
         hostname: b2_eval
         build: ./docker
+        volumes:
+            - ./app:/var/www/html/
         ports:
-            - "80"
+            - "8080:80"
 
