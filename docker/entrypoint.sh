@@ -11,6 +11,12 @@ if [ ! -f /first_install.lock ] ; then
     touch /first_install.lock
 
 
+    #Clone github
+    if [[ -z "${GITHUB}" ]]; then
+        cd /var/www/html/httpstatus && git clone ${GITHUB}
+    fi
+
+
     #Make mysql user
     mysql -u root < /mariadb_root.sql
     
