@@ -3,7 +3,7 @@ FROM ubuntu:bionic
 ENV DEBIAN_FRONTEND noninteractive
 RUN export DEBIAN_FRONTEND=noninteractive
 
-RUN apt update -y && apt install -y vim apache2 php php-xml php-mbstring php-pdo php-mysql php-curl supervisor mariadb-server composer
+RUN apt update -y && apt install -y vim apache2 php php-xml php-mbstring php-pdo php-mysql php-curl php-zip supervisor mariadb-server composer
 RUN a2enmod rewrite
 COPY 000-default.conf /etc/apache2/sites-enabled/000-default.conf
 
