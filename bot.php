@@ -80,6 +80,7 @@ for ($i = 1; $i <= 10; $i++)
     $port = 8000 + $i;
     $websites[$i] = [
         'url' => 'http://127.0.0.1:' . $port . '/httpstatus/api/',
+        'note' => 0,
     ];
 }
 
@@ -87,6 +88,20 @@ foreach ($websites as $key => $website)
 {
     $json = query($website['url']);
     $websites[$key]['list'] = $json['list'] ?? false;
+
+    if ($json['list'] ?? false)
+    {
+        $websites[$key]['note'] += 1;
+    }
 }
 
+foreach ($websites as $key => $website)
+{
+    if (!$website['list'] ?? false)
+    {
+        continue;
+    }
+
+    $json = query($website['list']);
+}
 var_dump($websites);
