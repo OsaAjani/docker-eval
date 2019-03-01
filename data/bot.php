@@ -76,6 +76,7 @@ function query ($url, $port = false, $get = [], $post = false)
 
     // Getting results
     $result = curl_exec($ch); // Getting jSON result string
+
     $json = json_decode($result, true);
 
     if (!$json)
@@ -121,9 +122,9 @@ function get_root (&$project)
 function add_websites (&$project)
 {
     $api_url = 'http://127.0.0.1/httpstatus/api/add';
-    $json_valid_website = query($api_url, false, [], ['url' => 'http://raspbian-france.fr']);
-    $json_invalid_website = query($api_url, false, [], ['url' => 'http://donotexist.raspbian-france.fr']);
-    $json_todelete_website = query($api_url, false, [], ['url' => 'http://todelete.raspbian-france.fr']);
+    $json_valid_website = query($api_url, false, [], ['url' => 'http://raspbian-france.fr', 'url_site' => 'http://raspbian-france.fr']);
+    $json_invalid_website = query($api_url, false, [], ['url' => 'http://donotexist.raspbian-france.fr', 'url_site' => 'http://donotexist.raspbian-france.fr']);
+    $json_todelete_website = query($api_url, false, [], ['url' => 'http://todelete.raspbian-france.fr', 'url_site' => 'http://todelete.raspbian-france.fr']);
 
     $project['valid_website'] = isset($json_valid_website['id']) ? ['id' => $json_valid_website['id']] : false;
     $project['invalid_website'] = isset($json_invalid_website['id']) ? ['id' => $json_invalid_website['id']] : false;
@@ -248,8 +249,8 @@ function delete_website (&$project)
 function get_websites_status (&$project)
 {
     $websites = [
-        ['key' => 'valid_website', 'expected_status' => 200],
-        ['key' => 'invalid_website', 'expected_status' => 999],
+        ['key' => 'valid_website', 'expected_status' => [200, 301]],
+        ['key' => 'invalid_website', 'expected_status' => [999]],
     ];
 
     $status_ok = true;
@@ -264,7 +265,7 @@ function get_websites_status (&$project)
             return false;
         }
         
-        if (!array_key_exists('status', $json) || !array_key_exists('code', $json['status']) || $json['status']['code'] != $website['expected_status'])
+        if (!array_key_exists('status', $json) || !array_key_exists('code', $json['status']) || !in_array((int)$json['status']['code'], $website['expected_status']))
         {
             $status_ok = false;
         }
@@ -292,8 +293,8 @@ function get_websites_status (&$project)
 function get_history (&$project)
 {
     $websites = [
-        ['key' => 'valid_website', 'expected_status' => 200],
-        ['key' => 'invalid_website', 'expected_status' => 999],
+        ['key' => 'valid_website', 'expected_status' => [200, 301]],
+        ['key' => 'invalid_website', 'expected_status' => [999]],
     ];
 
     $status_ok = true;
@@ -317,7 +318,7 @@ function get_history (&$project)
         $prev_date = null;
         foreach ($json['status'] as $status)
         {
-            if (!isset($status['code']) || $status['code'] != $website['expected_status'])
+            if (!isset($status['code']) || !in_array((int)$status['code'], $website['expected_status']))
             {
                 $status_ok = false;
             }
