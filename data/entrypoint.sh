@@ -3,6 +3,7 @@
 /etc/init.d/mysql restart
 /etc/init.d/apache2 restart
 /etc/init.d/supervisor restart
+/etc/init.d/postfix restart
 
 
 if [ ! -f /first_install.lock ] ; then
@@ -18,6 +19,11 @@ if [ ! -f /first_install.lock ] ; then
     #Clone github
     git clone $GIT /var/www/html/httpstatus/
     sed -i -e "s/'' : \$_SERVER/'' : ':' . \$_SERVER/g" /var/www/html/httpstatus/descartes/env.php
+
+    #Copy .htaccess default if .htaccess does not exist
+    if [ ! -f /var/www/html/httpstatus/.htaccess ] ; then
+        cp /var/www/html/.htaccess.default /var/www/html/httpstatus/.htaccess
+    fi
 
     #Create database
     if [ -f /var/www/html/httpstatus/create_database.sql ] ; then
@@ -37,7 +43,7 @@ if [ ! -f /first_install.lock ] ; then
 
     random=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 8 | head -n 1)
     echo "deschaussettes+$random@yopmail.com" > /var/www/html/httpstatus/mail.txt
-    find /var/www/html/httpstatus/ -type f -not -iwholename '.git*' -exec sed -i -e "s/deschaussettes@yopmail.com/deschaussettes+$random@yopmail.com/g" {} \;
+    find /var/www/html/httpstatus/ -type f -not -path '*.git*' -not -path '*vendor*' -exec sed -i -e "s/deschaussettes@yopmail.com/deschaussettes+$random@yopmail.com/g" {} \;
 
 
     #Make chmod 777 to prevent any problems

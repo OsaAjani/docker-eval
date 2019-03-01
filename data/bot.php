@@ -282,7 +282,7 @@ function get_websites_status (&$project)
     
     if ($status_ok)
     {
-        $project['note'] += 1; 
+        $project['note'] += 2; 
     }
 
     return true;
@@ -350,13 +350,6 @@ function get_history (&$project)
         {
             $format_ok = false;
         }
-
-        $at = DateTime::createFromFormat('T-m-d H:i:s', $status['at']);
-        if ($at === false)
-        {
-            $format_ok = false;
-        }
-
     }
 
     if ($format_ok)
@@ -386,8 +379,21 @@ function verif_mails (&$project)
     }
 
     $yopmail_url = 'http://www.yopmail.com/inbox.php?v=2.9&login=' . rawurlencode(explode('@', $yopmail_address)[0]);
+    $yopmail_page = file_get_contents($yopmail_url);
 
-    $query();
+    if (!$yopmail_page)
+    {
+        return false;
+    }
+
+    $find_mail = mb_strpos($yopmail_page, 'class="um"');
+    if ($find_mail === false)
+    {
+        return false;
+    }
+
+    $project['note'] += 2;
+    return true;
 }
 
 /* Main */
@@ -423,6 +429,7 @@ if (!$delete_website)
 
 //Wait 8:30 minutes before running status checks
 //sleep(60 * 8.5); 
+sleep(15);
 
 $get_websites_status = get_websites_status($project);
 if (!$get_websites_status)
@@ -436,7 +443,8 @@ if (!$get_history)
     show_note($project);
 }
 
-show_note($project);
+//Wait 2 more minutes, so mail has time to arrive
+//sleep(60 * 2);
 
 $verif_mails = verif_mails($project);
 if (!$verif_mails)
