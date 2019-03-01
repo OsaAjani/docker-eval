@@ -105,7 +105,7 @@ function show_note ($project)
 
     echo    $names . 
             "\n---------------\n" . 
-            ($project['note'] ?? 0) . "/15\n\n";
+            ($project['note'] ?? 0) . "/10\n\n";
     exit(0);
 }
 
@@ -121,7 +121,6 @@ function get_root (&$project)
     }
 
     $project['urls'] = ['list' => $json['list']];
-    $project['note'] += 1;
     return true;
 }
 
@@ -248,7 +247,7 @@ function delete_website (&$project)
         }
     }
 
-    $project['note'] += 2;
+    $project['note'] += 1;
     return true;
 }
 
@@ -281,6 +280,15 @@ function get_websites_status (&$project)
         {
             $format_ok = false;
         }
+
+        if (isset($json['status']['at']))
+        {
+            $at = !DateTime::createFromFormat('Y-m-d H:i:s', $json['status']['at']))
+            if ($at === false)
+            {
+                $format_ok = false;
+            }
+        }
     }
 
     if ($format_ok)
@@ -290,7 +298,7 @@ function get_websites_status (&$project)
     
     if ($status_ok)
     {
-        $project['note'] += 2; 
+        $project['note'] += 1; 
     }
 
     return true;
@@ -322,7 +330,6 @@ function get_history (&$project)
             $status_ok = false;
         }
 
-        $prev_date = null;
         foreach ($json['status'] as $status)
         {
             if (!isset($status['code']) || !in_array((int)$status['code'], $website['expected_status']))
@@ -330,27 +337,18 @@ function get_history (&$project)
                 $status_ok = false;
             }
 
-            if ($prev_date !== null)
-            {
-                $diff = $prev_date->diff(DateTime::createFromFormat('T-m-d H:i:s', $status['at'])); 
-                $diff_to_sec = $diff->i * 60 + $diff->s;
-                $diff_to_sec = abs($diff_to_sec);
-
-                if ($diff_to_sec < 110 || $diff_to_sec > 130)
-                {
-                    $date_ok = false;
-                }
-            }
-
             if (!isset($status['code'], $status['at']))
             {
                 $format_ok = false;
             }
-
-            $prev_date =  DateTime::createFromFormat('T-m-d H:i:s', $status['at']) ?? false;
-            if ($prev_date === false)
+            
+            if (isset($status['at']))
             {
-                $date_ok = false;
+                $at = !DateTime::createFromFormat('Y-m-d H:i:s', $status['at']))
+                if ($at === false)
+                {
+                    $format_ok = false;
+                }
             }
         }
 
@@ -361,11 +359,6 @@ function get_history (&$project)
     }
 
     if ($format_ok)
-    {
-        $project['note'] += 1;
-    }
-    
-    if ($date_ok)
     {
         $project['note'] += 1;
     }
@@ -400,7 +393,7 @@ function verif_mails (&$project)
         return false;
     }
 
-    $project['note'] += 2;
+    $project['note'] += 1;
     return true;
 }
 
@@ -423,6 +416,10 @@ if (!$add_websites)
     show_note($project);
 }
 
+//Wait 8:30 minutes before running status checks
+//sleep(60 * 8.5); 
+sleep(15);
+
 $get_list = get_list($project);
 if (!$get_list)
 {
@@ -434,10 +431,6 @@ if (!$delete_website)
 {
     show_note($project);
 }
-
-//Wait 8:30 minutes before running status checks
-//sleep(60 * 8.5); 
-sleep(15);
 
 $get_websites_status = get_websites_status($project);
 if (!$get_websites_status)
