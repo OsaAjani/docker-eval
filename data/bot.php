@@ -50,6 +50,13 @@ function query ($url, $port = false, $get = [], $post = false)
 
     #forge url
     $url['path'] = rtrim($url['path'], '/');
+
+    if (mb_strpos($url['path'], 'httpstatus') === false)
+    {
+	    $url['path'] = str_replace('/api', '/httpstatus/api', $url['path']);
+    }
+
+    $url['scheme'] = $url['scheme'] ?? 'http';
     $url['query'] = http_build_query($params);
     $url = unparse_url($url);
 
