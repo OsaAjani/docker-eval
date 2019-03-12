@@ -94,6 +94,7 @@ function query ($url, $port = false, $get = [], $post = false)
     return $json;
 }
 
+
 function show_note ($project)
 {
     $names = file_get_contents(__DIR__ . '/httpstatus/names.txt');
@@ -111,6 +112,25 @@ function show_note ($project)
 
 
 /** Actions **/
+function site_available (&$project)
+{
+    $headers = get_headers('http://127.0.0.1/httpstatus');
+    
+    $matches = null;
+    preg_match('#(.*) (.*) (.*)#', $headers[0], $matches);
+
+    $code = (int) $matches[2];
+    
+    if ($code >= 400 || $code < 200)
+    {
+        return false;
+    }
+
+    $project['note'] += 5;
+    return true;
+}
+
+
 function get_root (&$project)
 {
     $json = query($project['url']);
@@ -417,8 +437,8 @@ if (!$add_websites)
 }
 
 //Wait 8:30 minutes before running status checks
-//sleep(60 * 8.5); 
-sleep(15);
+sleep(60 * 8.5); 
+//sleep(15);
 
 $get_list = get_list($project);
 if (!$get_list)
@@ -445,7 +465,7 @@ if (!$get_history)
 }
 
 //Wait 2 more minutes, so mail has time to arrive
-//sleep(60 * 2);
+sleep(60 * 2);
 
 $verif_mails = verif_mails($project);
 if (!$verif_mails)
