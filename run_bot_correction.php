@@ -10,10 +10,10 @@
         exec($run_docker);
     }
 
-    sleep(30);
-    //sleep(60 * 15); //wait for 15 minutes to make sure everything execute correctly
+    //sleep(30);
+    sleep(60 * 15); //wait for 15 minutes to make sure everything execute correctly
  
-    for ($i = 1; $i <= 10; $i++)
+    for ($i = 1; $i <= 30; $i++)
     {
         echo "Show note for b2_correct_$i\n";
         echo "----------------------------\n";

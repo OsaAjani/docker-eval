@@ -1,7 +1,7 @@
 <?php
     $stop_docker = 'docker stop';
     $rm_docker = 'docker rm';
-    for ($i = 1; $i <= 10; $i++)
+    for ($i = 1; $i <= 30; $i++)
     {
         $stop_docker .= ' b2_correct_' . $i;
         $rm_docker .= ' b2_correct_' . $i;

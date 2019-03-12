@@ -14,9 +14,9 @@
     {
         $i++;
 
-        if ($i > 10)
+        if ($i > 30)
         {
-            echo "Stop at 10 running containers...\n";
+            echo "Stop at 30 running containers...\n";
             break;
         }
 
@@ -28,6 +28,8 @@
         $run_docker = 'docker run -d -p ' . $port . ':80 -e "GIT=' . $repo . '" --cpus=0.2 -m=800m --name=b2_correct_' . $i . ' b2_correct';
         #echo($run_docker."\n");
         exec($run_docker);
+
+        sleep(3); //sleep 3 seconds
     }
 
     
