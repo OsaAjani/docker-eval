@@ -303,7 +303,7 @@ function get_websites_status (&$project)
 
         if (isset($json['status']['at']))
         {
-            $at = !DateTime::createFromFormat('Y-m-d H:i:s', $json['status']['at']))
+            $at = !DateTime::createFromFormat('Y-m-d H:i:s', $json['status']['at']);
             if ($at === false)
             {
                 $format_ok = false;
@@ -364,7 +364,7 @@ function get_history (&$project)
             
             if (isset($status['at']))
             {
-                $at = !DateTime::createFromFormat('Y-m-d H:i:s', $status['at']))
+                $at = !DateTime::createFromFormat('Y-m-d H:i:s', $status['at']);
                 if ($at === false)
                 {
                     $format_ok = false;
