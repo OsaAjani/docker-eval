@@ -24,12 +24,16 @@ if [ ! -f /first_install.lock ] ; then
     if [ ! -f /var/www/html/httpstatus/.htaccess ] ; then
         cp /var/www/html/.htaccess.default /var/www/html/httpstatus/.htaccess
     fi
+   
+    #Change user
+    random=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 8 | head -n 1)
+    echo "deschaussettes$random@yopmail.com" > /var/www/html/httpstatus/mail.txt
+    find /var/www/html/httpstatus/ -type f -not -path '*.git*' -not -path '*vendor*' -exec sed -i -e "s/deschaussettes@yopmail.com/deschaussettes$random@yopmail.com/g" {} \;
 
     #Create database
     if [ -f /var/www/html/httpstatus/create_database.sql ] ; then
         mysql -u root -pbernardbernard < /var/www/html/httpstatus/create_database.sql
     fi
-
     
     #Composer install
     cd /var/www/html/httpstatus/ && composer install
@@ -40,11 +44,6 @@ if [ ! -f /first_install.lock ] ; then
         cp /var/www/html/httpstatus/supervisor.conf /etc/supervisor/conf.d/
         /etc/init.d/supervisor restart
     fi
-
-    random=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 8 | head -n 1)
-    echo "deschaussettes$random@yopmail.com" > /var/www/html/httpstatus/mail.txt
-    find /var/www/html/httpstatus/ -type f -not -path '*.git*' -not -path '*vendor*' -exec sed -i -e "s/deschaussettes@yopmail.com/deschaussettes$random@yopmail.com/g" {} \;
-
 
     #Make chmod 777 to prevent any problems
     chmod -R 777 /var/www/html/
