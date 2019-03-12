@@ -21,7 +21,7 @@ if [ ! -f /first_install.lock ] ; then
     sed -i -e "s/'' : \$_SERVER/'' : ':' . \$_SERVER/g" /var/www/html/httpstatus/descartes/env.php
 
     #Copy .htaccess default if .htaccess does not exist
-    if [ ! -f /var/www/html/httpstatus/.htaccess ] ; then
+    if [ ! -f /var/www/html/httpstatus/.htaccess && ! -f /var/www/html/httpstatus/symfony.lock ] ; then
         cp /var/www/html/.htaccess.default /var/www/html/httpstatus/.htaccess
     fi
    
